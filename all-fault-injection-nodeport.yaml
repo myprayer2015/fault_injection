@@ -1,0 +1,236 @@
+######################
+# microweb-webui-svc #
+######################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microweb-faultinjection-mem-1-svc
+  namespace: default
+spec:
+  # externalTrafficPolicy: Local
+  ports:
+  - protocol: TCP
+    port: 80
+    # targetPort: 80
+    nodePort: 30090
+  clusterIP: 10.96.0.13
+  selector:
+    app: microweb-faultinjection-mem
+  type: NodePort
+  # type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microweb-faultinjection-mem-2-svc
+  namespace: default
+spec:
+  # externalTrafficPolicy: Local
+  ports:
+  - protocol: TCP
+    port: 80
+    # targetPort: 80
+    nodePort: 30091
+  clusterIP: 10.96.0.14
+  selector:
+    app: microweb-faultinjection-mem
+  type: NodePort
+  # type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microweb-faultinjection-cpu-1-svc
+  namespace: default
+spec:
+  # externalTrafficPolicy: Local
+  ports:
+  - protocol: TCP
+    port: 80
+    # targetPort: 80
+    nodePort: 30092
+  clusterIP: 10.96.0.15
+  selector:
+    app: microweb-faultinjection-cpu
+  type: NodePort
+  # type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microweb-faultinjection-cpu-2-svc
+  namespace: default
+spec:
+  # externalTrafficPolicy: Local
+  ports:
+  - protocol: TCP
+    port: 80
+    # targetPort: 80
+    nodePort: 30093
+  clusterIP: 10.96.0.16
+  selector:
+    app: microweb-faultinjection-cpu
+  type: NodePort
+  # type: ClusterIP
+---
+######################
+# microweb-webui-v1     #
+######################
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microweb-faultinjection-deployment-mem-1
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # service identifier
+        app: microweb-faultinjection-mem
+        version: v1
+    spec:
+      containers:
+      - name: microweb-faultinjection-mem
+        image: xdxue/fault-injection:v2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: FAULT_TYPE
+          value: "mem"
+        - name: THREAD_NUM
+          value: "1"
+        - name: MEM_SIZE
+          value: "5M"
+        - name: MODE
+          value: "1"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.1"
+            memory: 256Mi
+          # requests:
+            # cpu: "0.2"
+            # memory: 128Mi
+---
+######################
+# microweb-webui-v1     #
+######################
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microweb-faultinjection-deployment-mem-2
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # service identifier
+        app: microweb-faultinjection-mem
+        version: v1
+    spec:
+      containers:
+      - name: microweb-faultinjection-mem
+        image: xdxue/fault-injection:v2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: FAULT_TYPE
+          value: "mem"
+        - name: THREAD_NUM
+          value: "1"
+        - name: MEM_SIZE
+          value: "5M"
+        - name: MODE
+          value: "2"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.1"
+            memory: 256Mi
+          # requests:
+            # cpu: "0.2"
+            # memory: 128Mi
+---
+######################
+# microweb-webui-v2     #
+######################
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microweb-faultinjection-deployment-cpu-1
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # service identifier
+        app: microweb-faultinjection-cpu
+        version: v1
+    spec:
+      containers:
+      - name: microweb-faultinjection-cpu
+        image: xdxue/fault-injection:v2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: FAULT_TYPE
+          value: "cpu"
+        - name: CPU_NUM
+          value: "1"
+        - name: MODE
+          value: "1"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.4"
+            memory: 64Mi
+          # requests:
+            # cpu: "0.2"
+            # memory: 128Mi
+---
+######################
+# microweb-webui-v2     #
+######################
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microweb-faultinjection-deployment-cpu-2
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # service identifier
+        app: microweb-faultinjection-cpu
+        version: v1
+    spec:
+      containers:
+      - name: microweb-faultinjection-cpu
+        image: xdxue/fault-injection:v2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: FAULT_TYPE
+          value: "cpu"
+        - name: CPU_NUM
+          value: "1"
+        - name: MODE
+          value: "2"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.4"
+            memory: 64Mi
+          # requests:
+            # cpu: "0.2"
+            # memory: 128Mi
+---
