@@ -1,0 +1,10 @@
+mem-1:
+http://23.106.158.242:30090/cpu-err-injection
+mem-2:
+http://23.106.158.242:30091/cpu-err-injection
+cpu-1:
+http://23.106.158.242:30092/cpu-err-injection
+cpu-2:
+http://23.106.158.242:30093/cpu-err-injection
+grafana
+http://23.106.158.242:31748/dashboards
